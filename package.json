@@ -1,0 +1,12 @@
+{
+  "name": "pesse-sendmoney",
+  "version": "1.0.1",
+  "private": true,
+  "description": "Vanilla JavaScript money transfer UI demo for GitHub Pages",
+  "scripts": {
+    "start": "node server.cjs",
+    "dev": "node server.cjs",
+    "test": "node --check app.js && node verify.cjs"
+  },
+  "engines": { "node": ">=18" }
+}
