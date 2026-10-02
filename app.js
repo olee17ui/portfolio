@@ -1,114 +1,72 @@
-const app = document.querySelector('#app');
-const cards = [
-  { name: 'Linda Srikandi', balance: 112411, last: '2451', theme: 'lime' },
-  { name: 'Linda Srikandi', balance: 112411, last: '0095', theme: 'dark' },
-  { name: 'Linda Srikandi', balance: 12000, last: '1122', theme: 'white' },
-];
-const people = [
-  { name: 'Syaiful Rijal', short: 'S Rijal', account: '8921362190', avatar: '👨🏻' },
-  { name: 'Ferina C', short: 'Ferina C', account: '8921362191', avatar: '👩🏻' },
-  { name: 'Daffa T', short: 'Daffa T', account: '8921362192', avatar: '👨🏽' },
-  { name: 'Bayu S', short: 'Bayu S', account: '8921362193', avatar: '👨🏻‍💼' },
-  { name: 'Christian K', short: 'Christian K', account: '8921362194', avatar: '👨🏽‍🦱' },
-];
-const state = { screen: 'home', selected: 0, recipient: 0, amount: '19', total: 521098.31, cardReturn: 'send', transactions: [], sent: 0 };
-const money = n => n.toLocaleString('en-US', { maximumFractionDigits: 2 });
-const avatar = p => `<span class="avatar" aria-hidden="true">${p.avatar}</span>`;
-const screenHeader = (title, right = '<button class="circle" data-action="help" aria-label="도움말">?</button>') => `<header class="topbar"><button class="circle" data-action="home" aria-label="홈으로">←</button><span>${title}</span>${right}</header>`;
-function navigate(screen) { state.screen = screen; render(); }
-let transferTimer = null;
-let pendingTransfer = null;
-let receipt = null;
-const outlineIcon = (name) => {
- const paths = { card: '<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 10h18M6 15h4"/>', amount: '<circle cx="12" cy="12" r="9"/><path d="M15 8h-4a2 2 0 0 0 0 4h2a2 2 0 0 1 0 4H9m3-10v12"/>', fee: '<path d="M6 3h8l4 4v14H6zM14 3v5h4M9 12h6M9 16h6"/>', date: '<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M7 2v6M17 2v6M3 10h18"/>' };
- return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${paths[name]}</svg>`;
-};
-function transferHeader(title, action) {
- return `<div class="status-bar" aria-hidden="true"><span>9:41</span><div class="status-icons"><span class="signal"><i></i><i></i><i></i><i></i></span><svg viewBox="0 0 24 20"><path d="M2 6Q12 -2 22 6M6 10q6-5 12 0M10 14q2-2 4 0" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg><span class="battery"></span></div></div><header class="transfer-header"><button data-action="${action}" aria-label="${action==='cancel-transfer'?'송금 취소':'홈으로'}">←</button><span>${title}</span></header>`;
+const app=document.querySelector('#app');
+const el=(tag,text,cls)=>{const n=document.createElement(tag);if(text!==undefined)n.textContent=text;if(cls)n.className=cls;return n};
+function image(src,alt,lazy=true){const n=el('img');n.src=src;n.alt=alt;n.decoding='async';if(lazy)n.loading='lazy';return n}
+function link(href,text,cls){const n=el('a',text,cls);n.href=href;return n}
+let content;
+const categories=[['uiux','UI/UX','사용자 흐름, 와이어프레임, 웹·앱 화면과 프로토타입.'],['logo','LOGO','브랜드의 개성을 담은 로고, 심볼과 아이덴티티.'],['branding','BRANDING','브랜드 콘셉트, 아이덴티티와 다양한 매체의 적용 이미지.'],['detail','DETAIL PAGE','제품의 특징과 이야기를 전달하는 상세페이지.'],['banner','BANNER','핵심 메시지를 담은 프로모션·광고 배너.'],['ai','AI IMAGE','AI로 탐구한 이미지 콘셉트와 비주얼 실험.']];
+const box=document.querySelector('#lightbox');box.querySelector('button').onclick=()=>box.close();box.onclick=e=>{if(e.target===box)box.close()};
+function specializedDetail(p){
+ const isLogo=p.group==='logo';const section=el('section',undefined,isLogo?'logo-detail':'brand-detail');
+ const back=link('#/work/'+p.group,isLogo?'[ LOGO COLLECTION ]':'[ BRANDING COLLECTION ]','collection-back');section.append(back);
+ const copy=el('div',undefined,'case-copy');copy.append(el('span',p.category+' / '+p.year,'section-kicker'),el('h1',p.title),el('p',p.description,'case-description'));
+ if(p.role||p.tools){const facts=el('dl',undefined,'case-facts');for(const [label,value]of [['ROLE',p.role],['TOOLS',p.tools]])if(value)facts.append(el('dt',label),el('dd',value));copy.append(facts)}
+ const primary=el('button',undefined,isLogo?'logo-enlarged':'brand-primary');primary.setAttribute('aria-label',p.title+' 이미지 확대');primary.append(image(p.cover,p.title,false));primary.onclick=()=>{box.querySelector('img').src=p.cover;box.querySelector('img').alt=p.title;box.showModal()};
+ const hero=el('div',undefined,'case-hero');hero.append(copy,primary);section.append(hero);
+ const gallery=el('div',undefined,'case-gallery');p.images.filter(src=>src!==p.cover).forEach((src,i)=>{const b=el('button');b.setAttribute('aria-label',p.title+' 상세 이미지 '+(i+1)+' 확대');b.append(image(src,p.title+' 상세 '+(i+1)));b.onclick=()=>{box.querySelector('img').src=src;box.querySelector('img').alt=p.title;box.showModal()};gallery.append(b)});section.append(gallery);app.append(section);
 }
-function sendingScreen() {
- const t = pendingTransfer;
- return `<section class="screen transfer-screen">${transferHeader('Send Money','cancel-transfer')}<div class="sending-body" role="status" aria-live="polite"><svg class="transfer-spinner" viewBox="0 0 100 100" aria-hidden="true"><circle class="spinner-track" cx="50" cy="50" r="44"/><circle class="spinner-progress" cx="50" cy="50" r="44"/></svg><h1>Sending $${money(t.amount)}<br>to ${people[t.recipient].name}</h1><p>Processing your transaction securely...</p></div><button class="cancel-transfer" data-action="cancel-transfer">Cancel</button><div class="home-indicator" aria-hidden="true"></div></section>`;
+let disposeAlbum=()=>{};
+function renderAlbum(projects){
+ const demo=!projects.length;const source=demo?content.projects.filter(p=>!p.group).slice(0,8):projects;
+ const pages=source.flatMap(p=>(p.images.length?p.images:[p.cover]).map(src=>({src,title:p.title,id:p.id})));let spread=0,busy=false,animation;
+ const total=Math.ceil(pages.length/2),section=el('section',undefined,'album-section');section.setAttribute('aria-label','AI 이미지 바인더 앨범');
+ const note=el('p',demo?'ALBUM PREVIEW / 기존 이미지로 보는 배치 샘플':'AI IMAGE / VISUAL ARCHIVE','album-note');section.append(note);
+ const book=el('div',undefined,'album-book');const left=el('div',undefined,'album-sheet album-left'),right=el('div',undefined,'album-sheet album-right');book.append(left,right);
+ const rings=el('div',undefined,'binder-rings');rings.setAttribute('aria-hidden','true');for(let i=0;i<3;i++)rings.append(el('span'));book.append(rings);
+ function fill(sheet,index){sheet.replaceChildren();const page=pages[index];if(!page){sheet.append(el('span','END OF ARCHIVE','album-end'));return}const a=link('#/project/'+encodeURIComponent(page.id),undefined,'album-photo');a.append(image(page.src,page.title,false));sheet.append(a,el('div',String(index+1).padStart(2,'0')+' / '+page.title,'album-caption'))}
+ const controls=el('nav',undefined,'album-controls');controls.setAttribute('aria-label','앨범 페이지 넘기기');const prev=el('button','‹'),next=el('button','›'),counter=el('span');prev.type=next.type='button';prev.setAttribute('aria-label','이전 두 페이지');next.setAttribute('aria-label','다음 두 페이지');counter.setAttribute('aria-live','polite');controls.append(prev,counter,next);
+ function paint(){fill(left,spread*2);fill(right,spread*2+1);counter.textContent=total?String(spread+1).padStart(2,'0')+' / '+String(total).padStart(2,'0'):'00 / 00';prev.disabled=spread===0;next.disabled=spread>=total-1}
+ async function turn(direction){if(busy||spread+direction<0||spread+direction>=total)return;busy=true;const old=direction>0?right:left,leaf=el('div',undefined,'album-turn '+(direction>0?'turn-next':'turn-prev'));leaf.append(old.cloneNode(true));leaf.setAttribute('aria-hidden','true');leaf.inert=true;book.append(leaf);spread+=direction;paint();if(!matchMedia('(prefers-reduced-motion: reduce)').matches){animation=leaf.animate([{transform:'rotateY(0deg)',opacity:1},{transform:'rotateY('+(-direction*100)+'deg)',opacity:1,offset:.75},{transform:'rotateY('+(-direction*178)+'deg)',opacity:0}],{duration:650,easing:'cubic-bezier(.32,.05,.2,1)',fill:'forwards'});try{await animation.finished}catch{}}leaf.remove();busy=false}
+ for(const [button,direction]of [[prev,-1],[next,1]]){let hovered=false;button.onpointerenter=e=>{if(e.pointerType==='mouse'&&!button.disabled){hovered=true;turn(direction)}};button.onpointerleave=()=>{hovered=false};button.onclick=e=>{if(e.detail===0||!hovered)turn(direction)}};const keys=e=>{if(e.altKey||e.ctrlKey||e.metaKey||e.target.closest('input,textarea,select,dialog'))return;if(e.key==='ArrowLeft'||e.key==='ArrowRight'){e.preventDefault();turn(e.key==='ArrowLeft'?-1:1)}};window.addEventListener('keydown',keys);
+ let start;book.addEventListener('pointerdown',e=>{start={x:e.clientX,y:e.clientY}});let swiped=false;book.addEventListener('pointerup',e=>{if(!start)return;const dx=e.clientX-start.x,dy=e.clientY-start.y;start=null;if(Math.abs(dx)>55&&Math.abs(dx)>Math.abs(dy)*1.4){swiped=true;turn(dx<0?1:-1);setTimeout(()=>swiped=false,0)}});book.addEventListener('pointercancel',()=>start=null);book.addEventListener('click',e=>{if(swiped){e.preventDefault();e.stopPropagation()}},true);
+ disposeAlbum=()=>{window.removeEventListener('keydown',keys);animation?.cancel()};paint();const stage=el('div',undefined,'album-stage');stage.append(book,controls);section.append(stage);app.append(section);
 }
-function completeScreen() {
- const t=receipt,p=people[t.recipient];
- const initials=p.name.split(' ').map(part=>part[0]).slice(0,2).join('');
- const date=new Intl.DateTimeFormat('en-US',{month:'short',day:'numeric',year:'numeric',hour:'numeric',minute:'2-digit'}).format(t.date);
- return `<section class="screen transfer-screen">${transferHeader('Transfer Complete','home')}<div class="complete-body"><div class="complete-heading" role="status"><div class="transfer-check"><svg viewBox="0 0 64 64" fill="none" aria-hidden="true"><path d="m15 32 12 12 24-25" stroke="currentColor" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/></svg></div><h1>Transfer Complete</h1><p>You sent $${money(t.amount)} to ${p.name}</p></div><section class="receipt" aria-label="송금 상세 내역"><div class="receipt-person"><span class="initials">${initials}</span><div><strong>${p.name}</strong><small>${p.account}</small></div></div><dl><div class="receipt-row"><dt>${outlineIcon('card')}<span>From</span></dt><dd>Linda’s card <span class="card-digits">•••• ${t.last}</span></dd></div><div class="receipt-row"><dt>${outlineIcon('amount')}<span>Amount</span></dt><dd>$${t.amount.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})}</dd></div><div class="receipt-row"><dt>${outlineIcon('fee')}<span>Fee</span></dt><dd>$0.00 <span class="free-badge">Free</span></dd></div><div class="receipt-row"><dt>${outlineIcon('date')}<span>Date</span></dt><dd class="receipt-date">${date}</dd></div></dl></section></div><button class="done-transfer" data-action="home">Done</button><div class="home-indicator" aria-hidden="true"></div></section>`;
+function render(){
+ disposeAlbum();disposeAlbum=()=>{};
+ const route=location.hash.slice(1)||'/';app.replaceChildren();document.body.dataset.page=route;document.querySelectorAll('[data-nav]').forEach(a=>{a.removeAttribute('aria-current');if(route==='/'+a.dataset.nav)a.setAttribute('aria-current','page')});
+ const projects=content.projects;document.title=content.profile.name+' — Portfolio';
+ if(route==='/'){
+  const home=el('section',undefined,'portfolio-home');home.setAttribute('aria-labelledby','portfolio-title');
+  const eyebrow=el('div',undefined,'hero-eyebrow');eyebrow.append(el('span','WEB DESIGNER / CREATIVE PORTFOLIO'),el('span','Archive — '+new Date().getFullYear()));
+  const title=el('h1','PORTFOLIO','portfolio-title');title.id='portfolio-title';
+  const stage=el('div',undefined,'hero-stage'),identity=el('div',undefined,'hero-identity');identity.append(el('span','DESIGNED BY','hero-label'),el('p',content.profile.name));
+  const selected=projects.find(p=>p.featured)||projects[0];
+  const art=link(selected?'#/project/'+encodeURIComponent(selected.id):'#/about',undefined,'hero-art');art.append(image(selected?selected.cover:content.profile.aboutImage,selected?selected.title:content.profile.name,false));art.append(el('span',selected?'01 / '+selected.title:'ABOUT THE DESIGNER','hero-art-caption'));art.setAttribute('aria-label',selected?selected.title+' 작업 보기':'디자이너 소개 보기');
+  const intro=el('div',undefined,'hero-intro');intro.append(el('span','DIGITAL EXPERIENCES,','hero-label'),el('span','THOUGHTFULLY DESIGNED.','hero-label'),el('p','생각을 구조로,\n감각을 화면으로.'));
+  stage.append(identity,art,intro);const bottom=el('div',undefined,'hero-bottom');bottom.append(el('span','WEB / UI·UX / VISUAL DESIGN'),link('#/index','EXPLORE PORTFOLIO','hero-work'),link('#/about','ABOUT ME'));
+  home.append(eyebrow,title,stage,bottom);app.append(home);
+ }else if(route==='/index'){
+  const s=el('section',undefined,'contents-page'),visual=el('figure',undefined,'contents-visual');const preview=image(content.profile.indexImage||content.profile.aboutImage,'포트폴리오 비주얼',false);visual.append(preview,el('figcaption','A SELECTION OF IDEAS & IMAGES'));
+  const panel=el('div',undefined,'contents-panel');panel.append(el('span','01 / CONTENTS','section-kicker'),el('h1','INDEX'),el('p','화면에서 브랜드까지,\n분야별로 작업을 소개합니다.','contents-intro'));const nav=el('nav',undefined,'contents-list');nav.setAttribute('aria-label','작업 분야 목차');categories.forEach(([id,title,description],i)=>{const a=link('#/work/'+id,undefined,'contents-item');const heading=el('div',undefined,'contents-heading');heading.append(el('span',String(i+1).padStart(2,'0')),el('h2',title));a.append(heading,el('p',description));const count=projects.filter(p=>p.group===id).length;a.append(el('span',count?String(count).padStart(2,'0')+' PROJECTS':'준비 중','contents-count'));nav.append(a)});panel.append(nav,link('#/work','[ Archive ]','contents-all'));s.append(visual,panel);app.append(s);
+ }else if(route==='/work'||route.startsWith('/work/')){
+  const selectedCategory=categories.find(c=>c[0]===route.slice(6));const visible=selectedCategory?projects.filter(p=>p.group===selectedCategory[0]):projects;
+  const top=el('div',undefined,'page-top');top.append(el('h1','01 / Archive'),el('span',String(projects.length).padStart(2,'0')+' PROJECTS'));const grid=el('section',undefined,'work-grid');
+  top.firstChild.textContent=selectedCategory?'01 / '+selectedCategory[1]:'01 / Archive';top.lastChild.textContent=String(visible.length).padStart(2,'0')+' PROJECTS';const filters=el('nav',undefined,'work-filters');filters.setAttribute('aria-label','작업 분류');[['','ALL'],...categories].forEach(([id,label])=>{const a=link('#/work'+(id?'/'+id:''),label);if((selectedCategory?.[0]||'')===id)a.setAttribute('aria-current','page');filters.append(a)});
+  if(selectedCategory?.[0]==='logo')grid.className='logo-collection';if(selectedCategory?.[0]==='branding')grid.className='branding-collection';
+  if(selectedCategory?.[0]==='ai'){app.append(top,filters);renderAlbum(visible);window.scrollTo(0,0);return}
+  const isBanner=selectedCategory?.[0]==='banner';if(isBanner)grid.className='banner-collection';
+  visible.forEach((p,i)=>{const a=link('#/project/'+encodeURIComponent(p.id),undefined,isBanner?'banner-card':'work-card'+(p.group==='logo'?' logo-card':''));
+   if(isBanner){const copy=el('div',undefined,'banner-copy');copy.append(el('span',String(i+1).padStart(2,'0')+' / '+p.year,'section-kicker'),el('h2',p.title),el('p',p.summary||p.description),el('span',p.category,'banner-meta'));a.append(copy,image(p.cover,p.title))}
+   else a.append(el('span',p.isNew?'[NEW]':'','badge'),image(p.cover,p.title),el('p',p.title+' / '+p.year+' — '+p.category+'\n'+p.summary));grid.append(a)});app.append(top,filters,grid);if(!visible.length)app.append(el('p','이 분야의 작업을 준비하고 있습니다.','empty'),link('#/index','[ BACK TO INDEX ]'));
+ }else if(route==='/about'){
+  const p=content.profile,s=el('section',undefined,'resume-page'),copy=el('div',undefined,'resume-copy');copy.append(el('span','02 / THE DESIGNER','section-kicker'),el('h1','ABOUT ME'));
+  const facts=el('dl',undefined,'resume-facts');[['NAME',p.name],['BASED IN',p.location],['EMAIL',p.email],['FOCUS',p.discipline]].forEach(([label,value])=>{facts.append(el('dt',label));const dd=el('dd');dd.append(label==='EMAIL'?link('mailto:'+value,value):el('span',value));facts.append(dd)});copy.append(facts);
+  [['INTRODUCTION / 자기소개',p.bio],['EXPERIENCE / 경력',p.experience],['EDUCATION / 학력·교육',p.education],['SKILLS / 사용 도구',p.skills],['AWARDS / 수상·자격',p.awards]].forEach(([label,value])=>{if(label.startsWith('AWARDS')&&!value)return;const section=el('section',undefined,'resume-section');section.append(el('h2',label),el('p',value||'등록 예정'));copy.append(section)});copy.append(link('mailto:'+p.email,'[ GET IN TOUCH ]','resume-contact'));
+  const portrait=el('figure',undefined,'resume-portrait');portrait.append(image(p.aboutImage,p.name,false),el('figcaption',p.name+' / WEB DESIGNER'));s.append(copy,portrait);app.append(s);
+ }else if(route.startsWith('/project/')){
+  const p=projects.find(x=>encodeURIComponent(x.id)===route.slice(9));if(!p){app.append(el('p','작업을 찾을 수 없습니다.','empty'),link('#/work','전체 작업 보기'));return}
+  document.title=p.title+' — '+content.profile.name;if(['logo','branding'].includes(p.group)){specializedDetail(p);window.scrollTo(0,0);return}const intro=el('section',undefined,'detail-intro');intro.append(el('h1',String(projects.indexOf(p)+1).padStart(2,'0')+' / '+p.title),el('p',p.description),el('div',p.category+' / '+p.year,'meta'));const gallery=el('section',undefined,'gallery');(p.images.length?p.images:[p.cover]).forEach((src,i)=>{const b=el('button');b.setAttribute('aria-label',p.title+' 이미지 '+(i+1)+' 확대');b.append(image(src,p.title+' — '+(i+1),i>0));b.onclick=()=>{box.querySelector('img').src=src;box.querySelector('img').alt=p.title;box.showModal()};gallery.append(b)});const nav=el('nav',undefined,'project-nav');nav.append(link('#/work','[ Archive ]'));if(projects.length>1)nav.append(link('#/project/'+encodeURIComponent(projects[(projects.indexOf(p)+1)%projects.length].id),'[ NEXT PROJECT ]'));app.append(intro,gallery,nav);
+ }else{app.append(el('p','페이지를 찾을 수 없습니다.','empty'),link('#/','메인으로'))}
+ window.scrollTo(0,0);
 }
-function startTransfer() {
- const amount=Number(state.amount);
- if(state.screen!=='send'||pendingTransfer||!Number.isFinite(amount)||amount<=0||amount>cards[state.selected].balance)return;
- pendingTransfer={amount,recipient:state.recipient,card:state.selected,last:cards[state.selected].last};
- navigate('sending');
- transferTimer=setTimeout(()=>{
-  if(!pendingTransfer)return;
-  const t=pendingTransfer;
-  cards[t.card].balance-=t.amount;
-  state.total=Math.round((state.total-t.amount)*100)/100;
-  state.sent=t.amount;
-  receipt={...t,date:new Date()};
-  state.transactions.unshift(receipt);
-  pendingTransfer=null;transferTimer=null;state.amount='0';
-  navigate('success');
- },2600);
-}
-function cancelTransfer() {
- if(!pendingTransfer)return;
- clearTimeout(transferTimer);transferTimer=null;pendingTransfer=null;
- navigate('send');
-}
-function home() {
-  return `<section class="screen"><header class="topbar"><span class="brand">Pesse</span><div class="top-actions"><button class="circle" data-action="help" aria-label="도움말">?</button><button class="pill black" data-action="rewards">♔ Rewards ˙</button></div></header>
-  <div class="balance"><button class="balance-label" data-action="cards">Linda’s card balance <span class="mini-card"></span>⌄</button><h1>$${money(state.total)}</h1><span class="hold">Money hold <b>$2,500</b></span></div>
-  <div class="actions"><button data-action="cards">↗ Send</button><button data-action="receive">↙ Receive</button></div>
-  <div class="promo"><div><strong>Start sending money tax free</strong><p>The best place for freelancers to receive and send money. Start saving now!</p></div><span class="coin">$</span></div>
-  <section class="panel"><div class="section-title">Send again<button class="text-button" data-action="people">＋ Add</button></div><div class="people">${people.map((p,i)=>`<button class="person" data-person="${i}">${avatar(p)}${p.short}</button>`).join('')}</div></section>
-  <section class="panel history"><div class="section-title">History transaction<button class="text-button" data-action="history">see more</button></div>${state.transactions.map(t=>transaction(people[t.recipient].avatar,people[t.recipient].name,'Just now',`-$${money(t.amount)}`)).join('')}${transaction('◎','Dribbble Pro','June 28 · 00:01 AM','-$573')}${transaction('👨🏻','Syaiful Rijal','June 22 · 05:20 PM','+$1000',true)}${transaction('👩🏻','Ferina C','June 12 · 07:20 AM','-$200')}</section>
-  <nav class="nav" aria-label="주 메뉴"><button class="active" data-action="home" aria-label="홈">⌂</button><button data-action="history" aria-label="거래 내역">◉</button><button data-action="cards" aria-label="카드">▤</button><button data-action="receive" aria-label="입금">＄</button><button data-action="profile" aria-label="프로필">♙</button></nav></section>`;
-}
-function transaction(icon,name,date,amount,positive=false) { return `<div class="transaction"><span class="avatar">${icon}</span><div class="transaction-info">${name}<small>${date}</small></div><span class="value ${positive?'positive':''}">${amount}</span></div>`; }
-function cardScreen() { return `<section class="screen"><header class="topbar"><span>Select Card</span><button class="pill" data-action="new-card">＋ New card</button></header><div class="cards">${cards.map((c,i)=>`<button class="bank-card ${c.theme}" data-card="${i}" aria-label="${c.last} 카드 선택"><div class="card-name">${c.name}</div><div class="card-money">$${money(c.balance)}</div><span class="visa">VISA</span><span class="watermark" aria-hidden="true">Pesse</span><span class="card-bottom"><span>•••• ${c.last}</span>${state.selected===i?'<span class="main-badge">◉ Main card</span>':''}</span></button>`).join('')}</div><button class="pill black close" data-action="close-cards">× Close</button></section>`; }
-function sendScreen() {
- const p=people[state.recipient],c=cards[state.selected];
- return `<section class="screen">${screenHeader('Send money')}<section class="panel"><div class="section-title">Send to</div><div class="recipient">${avatar(p)}<div class="recipient-info">${p.name}<small>${p.account}</small></div><button class="change" data-action="people">Change</button></div></section>
- <div class="amount-area"><div class="amount" aria-label="송금 금액"><span id="amount">$${money(Number(state.amount))}</span><span class="caret"></span></div><p id="amount-hint" class="amount-hint" role="status"></p></div>
- <section class="panel selected-card"><span class="card-thumbnail ${c.theme}">Pesse<br>•••• ${c.last}</span><div class="recipient-info">Linda’s card<small>Balance $${money(c.balance)}</small></div><button class="change" data-action="change-card">Change</button></section>
- <div class="panel keypad" aria-label="금액 입력 키패드">${['1','2','3','4','5','6','7','8','9','000','0','⌫'].map(k=>`<button data-key="${k}" aria-label="${k==='⌫'?'마지막 숫자 지우기':k}">${k}</button>`).join('')}</div><button class="primary" id="send-button" data-action="submit">Send money</button></section>`;
-}
-function render() {
- app.classList.toggle('transfer-mode',state.screen==='sending'||state.screen==='success');
- if(state.screen==='home') app.innerHTML=home();
- if(state.screen==='cards') app.innerHTML=cardScreen();
- if(state.screen==='send') {app.innerHTML=sendScreen();updateAmount();}
- if(state.screen==='people') app.innerHTML=`<section class="screen">${screenHeader('Select recipient')}<p class="muted">Choose who you’d like to send money to.</p><div class="recipient-list">${people.map((p,i)=>`<button class="recipient-option" data-person="${i}">${avatar(p)}<span>${p.name}<br><small>${p.account}</small></span></button>`).join('')}</div></section>`;
- if(state.screen==='sending') app.innerHTML=sendingScreen();
- if(state.screen==='success') app.innerHTML=completeScreen();
- if(state.screen==='receive') app.innerHTML=`<section class="screen">${screenHeader('Receive money')}<section class="panel"><p class="muted">Share your account details to receive money.</p><h2>Linda Srikandi</h2><p>Pesse · 8921 3621 88</p><button class="primary" data-action="copy">Copy account number</button></section><p class="muted">화면 시연용 가상 계좌입니다.</p></section>`;
- if(state.screen==='history') app.innerHTML=`<section class="screen">${screenHeader('Transactions')}<section class="panel history">${state.transactions.map(t=>transaction(people[t.recipient].avatar,people[t.recipient].name,'Just now',`-$${money(t.amount)}`)).join('')}${transaction('◎','Dribbble Pro','June 28 · 00:01 AM','-$573')}${transaction('👨🏻','Syaiful Rijal','June 22 · 05:20 PM','+$1000',true)}${transaction('👩🏻','Ferina C','June 12 · 07:20 AM','-$200')}</section></section>`;
- if(state.screen==='new-card') app.innerHTML=`<section class="screen">${screenHeader('New card')}<section class="panel"><p class="muted">데모 카드를 추가합니다.</p><form id="card-form"><label class="field-label" for="card-last">Card last 4 digits</label><input class="input" id="card-last" name="last" inputmode="numeric" pattern="[0-9]{4}" maxlength="4" required placeholder="1234"><button class="primary" type="submit">Add card</button></form></section></section>`;
- if(state.screen==='profile') app.innerHTML=`<section class="screen">${screenHeader('My profile')}<section class="panel"><h2>Linda Srikandi</h2><p class="muted">Personal account · Pesse demo</p><p>${cards.length} cards connected</p></section></section>`;
- if(state.screen==='rewards') app.innerHTML=`<section class="screen">${screenHeader('Rewards')}<section class="panel"><h2>Your next little extra.</h2><p class="muted">Your rewards will appear here.</p><span class="coin">$</span><p>0 points</p></section></section>`;
-}
-function updateAmount(){const n=Number(state.amount),invalid=n>cards[state.selected].balance;document.querySelector('#amount').textContent='$'+money(n);document.querySelector('#amount-hint').textContent=invalid?'카드 잔액을 초과했습니다.':'';document.querySelector('#send-button').disabled=n<=0||invalid;}
-function inputKey(key){if(key==='⌫'||key==='Backspace')state.amount=state.amount.slice(0,-1)||'0';else if(/^\d+$/.test(key))state.amount=(state.amount==='0'?'':state.amount).concat(key).slice(0,8)||'0';updateAmount();}
-let toastTimer;
-function toast(message){const el=document.querySelector('#toast');el.textContent=message;el.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.remove('show'),3000);}
-app.addEventListener('click',async e=>{
- const button=e.target.closest('button');if(!button)return;
- if(button.dataset.card!==undefined){state.selected=Number(button.dataset.card);navigate(state.cardReturn);return;}
- if(button.dataset.person!==undefined){state.recipient=Number(button.dataset.person);navigate('send');return;}
- if(button.dataset.key!==undefined){inputKey(button.dataset.key);return;}
- const action=button.dataset.action;
- if(action==='cards'||action==='change-card'){state.cardReturn='send';navigate('cards');}
- else if(action==='close-cards')navigate('home');
- else if(action==='help')toast('Send → 카드 선택 → 금액 입력으로 진행하세요. 실제 이체가 없는 데모입니다.');
- else if(action==='submit')startTransfer();
- else if(action==='cancel-transfer')cancelTransfer();
- else if(action==='copy'){try{await navigator.clipboard.writeText('8921362188');toast('계좌번호를 복사했습니다.');}catch{toast('계좌번호: 8921362188');}}
- else if(action)navigate(action);
-});
-app.addEventListener('submit',e=>{if(e.target.id!=='card-form')return;e.preventDefault();const last=new FormData(e.target).get('last');if(!/^\d{4}$/.test(last))return;if(cards.some(c=>c.last===last)){toast('이미 등록된 카드 번호입니다.');return;}cards.push({name:'Linda Srikandi',balance:0,last,theme:'white'});navigate('cards');toast('데모 카드를 추가했습니다.');});
-document.addEventListener('keydown',e=>{if(state.screen!=='send'||e.ctrlKey||e.metaKey||e.altKey)return;if(/^\d$/.test(e.key)||e.key==='Backspace'){e.preventDefault();inputKey(e.key);}});
-render();
+fetch('data/portfolio.json').then(r=>{if(!r.ok)throw Error();return r.json()}).then(data=>{content=data;const p=data.profile;document.querySelector('#name').textContent=p.name;document.querySelector('#location').textContent=p.location;document.querySelector('#email').textContent=p.email;document.querySelector('#contact').href='mailto:'+p.email;document.querySelector('#discipline').textContent=p.discipline;document.querySelector('#copyright').textContent='© '+p.name;document.querySelector('#year').textContent=new Date().getFullYear();if(/^https:\/\//.test(p.instagram)){const a=document.querySelector('#social');a.hidden=false;a.href=p.instagram;a.target='_blank';a.rel='noopener noreferrer'}render();window.addEventListener('hashchange',render)}).catch(()=>{app.replaceChildren(el('p','데이터를 불러오지 못했습니다. 로컬 서버 또는 GitHub Pages에서 열어 주세요.','empty'))});
 

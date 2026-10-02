@@ -1,0 +1,246 @@
+{
+  "profile": {
+    "name": "PARK JU YOUNG",
+    "location": "AI WORKFLOW",
+    "email": "hello@example.com",
+    "instagram": "",
+    "discipline": "UI/UX DESIGN & BRANDING",
+    "aboutImage": "assets/images/about.jpg",
+    "bio": "사진과 그래픽, 움직이는 이미지를 통해 일상의 다른 표정을 탐구합니다.\n\n흐르는 빛과 색, 잠깐의 움직임에서 작업을 시작합니다. 작은 장면을 관찰하고, 그 안에 담긴 감각을 이미지로 기록합니다.\n\n개인 작업과 협업 프로젝트에 관한 이야기를 기다립니다.",
+    "experience": "",
+    "education": "",
+    "skills": "",
+    "awards": "",
+    "indexImage": "assets/images/work-2.jpg"
+  },
+  "projects": [
+    {
+      "id": "wind-study",
+      "title": "WIND STUDY",
+      "category": "Photography / Personal study",
+      "year": "2026",
+      "summary": "색과 움직임에 관한 시각적 기록.",
+      "description": "바람이 지나간 자리에 남은 색과 움직임을 기록했습니다. 흐려지는 윤곽과 선명한 색 사이에서 순간의 감각을 찾습니다.",
+      "cover": "assets/images/work-1.jpg",
+      "images": [
+        "assets/images/work-1.jpg"
+      ],
+      "featured": true,
+      "isNew": true
+    },
+    {
+      "id": "afterimage",
+      "title": "AFTERIMAGE",
+      "category": "Photography / Personal study",
+      "year": "2026",
+      "summary": "빛과 인물의 잔상을 탐구한 개인 작업.",
+      "description": "움직임 뒤에 남는 잔상을 관찰한 이미지 실험입니다. 인물의 형태보다 빛과 시간의 흔적에 집중했습니다.",
+      "cover": "assets/images/work-2.jpg",
+      "images": [
+        "assets/images/work-2.jpg"
+      ],
+      "featured": true,
+      "isNew": true
+    },
+    {
+      "id": "in-bloom",
+      "title": "IN BLOOM",
+      "category": "Photography / Personal study",
+      "year": "2026",
+      "summary": "색과 움직임에 관한 시각적 기록.",
+      "description": "꽃의 색과 인물의 표정을 하나의 흐름으로 엮었습니다. 가까이 다가갈수록 달라지는 감정과 질감을 담았습니다.",
+      "cover": "assets/images/work-3.jpg",
+      "images": [
+        "assets/images/work-3.jpg",
+        "assets/images/detail-3.jpg"
+      ],
+      "featured": true,
+      "isNew": false
+    },
+    {
+      "id": "silk-shadow",
+      "title": "SILK & SHADOW",
+      "category": "Photography / Personal study",
+      "year": "2026",
+      "summary": "빛과 인물의 잔상을 탐구한 개인 작업.",
+      "description": "천의 결, 빛의 방향, 인물의 움직임이 만나는 순간을 탐색합니다.",
+      "cover": "assets/images/work-4.jpg",
+      "images": [
+        "assets/images/work-4.jpg"
+      ],
+      "featured": true,
+      "isNew": false
+    },
+    {
+      "id": "turning-point",
+      "title": "TURNING POINT",
+      "category": "Photography / Personal study",
+      "year": "2026",
+      "summary": "색과 움직임에 관한 시각적 기록.",
+      "description": "회전하는 동작을 따라 색과 형태의 리듬을 수집했습니다.",
+      "cover": "assets/images/work-5.jpg",
+      "images": [
+        "assets/images/work-5.jpg",
+        "assets/images/detail-5.jpg"
+      ],
+      "featured": true,
+      "isNew": false
+    },
+    {
+      "id": "quiet-garden",
+      "title": "QUIET GARDEN",
+      "category": "Photography / Personal study",
+      "year": "2026",
+      "summary": "빛과 인물의 잔상을 탐구한 개인 작업.",
+      "description": "정적인 정원과 흔들리는 인물 사이의 대비를 담은 작업입니다.",
+      "cover": "assets/images/work-6.jpg",
+      "images": [
+        "assets/images/work-6.jpg"
+      ],
+      "featured": true,
+      "isNew": false
+    },
+    {
+      "id": "soft-light",
+      "title": "SOFT LIGHT",
+      "category": "Photography / Personal study",
+      "year": "2026",
+      "summary": "색과 움직임에 관한 시각적 기록.",
+      "description": "부드러운 빛 속에서 드러나는 작은 표정의 변화를 기록했습니다.",
+      "cover": "assets/images/work-7.jpg",
+      "images": [
+        "assets/images/work-7.jpg"
+      ],
+      "featured": true,
+      "isNew": false
+    },
+    {
+      "id": "red-movement",
+      "title": "RED MOVEMENT",
+      "category": "Photography / Personal study",
+      "year": "2026",
+      "summary": "빛과 인물의 잔상을 탐구한 개인 작업.",
+      "description": "붉은 색면과 빠른 움직임을 통해 인물의 에너지를 표현했습니다.",
+      "cover": "assets/images/work-8.jpg",
+      "images": [
+        "assets/images/work-8.jpg"
+      ],
+      "featured": true,
+      "isNew": false
+    },
+    {
+      "id": "branding-reference-1",
+      "title": "FABRIC / IDENTITY",
+      "category": "Branding / 첨부 시안 샘플",
+      "group": "branding",
+      "year": "2026",
+      "summary": "첨부 시안을 활용한 레이아웃 샘플.",
+      "description": "첨부 시안의 이미지를 활용한 브랜딩 상세 페이지 샘플입니다.\n\n이 영역에 브랜드 소개, 디자인 방향, 타깃과 작업 과정을 입력하세요. 아래에는 로고 적용 이미지와 목업, 그래픽 시스템을 순서대로 배치할 수 있습니다.\n\n실제 프로젝트의 이미지와 설명으로 교체하여 사용하세요.",
+      "cover": "assets/images/brand-01.jpg",
+      "images": [
+        "assets/images/brand-01.jpg",
+        "assets/images/brand-detail.jpg"
+      ],
+      "featured": false,
+      "isNew": false,
+      "role": "",
+      "tools": ""
+    },
+    {
+      "id": "branding-reference-2",
+      "title": "EMBLEM / IDENTITY",
+      "category": "Branding / 첨부 시안 샘플",
+      "group": "branding",
+      "year": "2026",
+      "summary": "첨부 시안을 활용한 레이아웃 샘플.",
+      "description": "첨부 시안의 이미지를 활용한 브랜딩 상세 페이지 샘플입니다.\n\n이 영역에 브랜드 소개, 디자인 방향, 타깃과 작업 과정을 입력하세요. 아래에는 로고 적용 이미지와 목업, 그래픽 시스템을 순서대로 배치할 수 있습니다.\n\n실제 프로젝트의 이미지와 설명으로 교체하여 사용하세요.",
+      "cover": "assets/images/brand-02.jpg",
+      "images": [
+        "assets/images/brand-02.jpg",
+        "assets/images/brand-detail.jpg"
+      ],
+      "featured": false,
+      "isNew": false,
+      "role": "",
+      "tools": ""
+    },
+    {
+      "id": "branding-reference-3",
+      "title": "PRINT / IDENTITY",
+      "category": "Branding / 첨부 시안 샘플",
+      "group": "branding",
+      "year": "2026",
+      "summary": "첨부 시안을 활용한 레이아웃 샘플.",
+      "description": "첨부 시안의 이미지를 활용한 브랜딩 상세 페이지 샘플입니다.\n\n이 영역에 브랜드 소개, 디자인 방향, 타깃과 작업 과정을 입력하세요. 아래에는 로고 적용 이미지와 목업, 그래픽 시스템을 순서대로 배치할 수 있습니다.\n\n실제 프로젝트의 이미지와 설명으로 교체하여 사용하세요.",
+      "cover": "assets/images/brand-03.jpg",
+      "images": [
+        "assets/images/brand-03.jpg",
+        "assets/images/brand-detail.jpg"
+      ],
+      "featured": false,
+      "isNew": false,
+      "role": "",
+      "tools": ""
+    },
+    {
+      "id": "banner-reference-1",
+      "title": "PORTRAIT",
+      "group": "banner",
+      "category": "Banner / 시안 샘플",
+      "year": "2026",
+      "summary": "첨부한 레퍼런스의 이미지로 구성한 배치 샘플입니다.\n\n이곳에 배너의 목적, 전달할 메시지와 디자인 방향을 작성하세요.",
+      "description": "상단 설명과 하단 이미지의 배치를 확인하기 위한 시안 샘플입니다. 실제 배너 이미지와 프로젝트 설명으로 교체하여 사용하세요.",
+      "cover": "assets/images/banner-reference-1.jpg",
+      "images": [
+        "assets/images/banner-reference-1.jpg"
+      ],
+      "featured": false,
+      "isNew": false
+    },
+    {
+      "id": "banner-reference-2",
+      "title": "STILL LIFE",
+      "group": "banner",
+      "category": "Banner / 시안 샘플",
+      "year": "2026",
+      "summary": "첨부한 레퍼런스의 이미지로 구성한 배치 샘플입니다.\n\n이곳에 배너의 목적, 전달할 메시지와 디자인 방향을 작성하세요.",
+      "description": "상단 설명과 하단 이미지의 배치를 확인하기 위한 시안 샘플입니다. 실제 배너 이미지와 프로젝트 설명으로 교체하여 사용하세요.",
+      "cover": "assets/images/banner-reference-2.jpg",
+      "images": [
+        "assets/images/banner-reference-2.jpg"
+      ],
+      "featured": false,
+      "isNew": false
+    },
+    {
+      "id": "banner-reference-3",
+      "title": "BOTANICAL",
+      "group": "banner",
+      "category": "Banner / 시안 샘플",
+      "year": "2026",
+      "summary": "첨부한 레퍼런스의 이미지로 구성한 배치 샘플입니다.\n\n이곳에 배너의 목적, 전달할 메시지와 디자인 방향을 작성하세요.",
+      "description": "상단 설명과 하단 이미지의 배치를 확인하기 위한 시안 샘플입니다. 실제 배너 이미지와 프로젝트 설명으로 교체하여 사용하세요.",
+      "cover": "assets/images/banner-reference-3.jpg",
+      "images": [
+        "assets/images/banner-reference-3.jpg"
+      ],
+      "featured": false,
+      "isNew": false
+    },
+    {
+      "id": "banner-reference-4",
+      "title": "DAILY MOMENTS",
+      "group": "banner",
+      "category": "Banner / 시안 샘플",
+      "year": "2026",
+      "summary": "첨부한 레퍼런스의 이미지로 구성한 배치 샘플입니다.\n\n이곳에 배너의 목적, 전달할 메시지와 디자인 방향을 작성하세요.",
+      "description": "상단 설명과 하단 이미지의 배치를 확인하기 위한 시안 샘플입니다. 실제 배너 이미지와 프로젝트 설명으로 교체하여 사용하세요.",
+      "cover": "assets/images/banner-reference-4.jpg",
+      "images": [
+        "assets/images/banner-reference-4.jpg"
+      ],
+      "featured": false,
+      "isNew": false
+    }
+  ]
+}
